@@ -1,7 +1,7 @@
 # Tasks: InkBook — Diário de Ideias de Tatuagens
 
 **Input**: [plan.md](plan.md), [spec.md](spec.md), [research.md](research.md), [data-model.md](data-model.md), [contracts/ui-and-storage.md](contracts/ui-and-storage.md) e [quickstart.md](quickstart.md).  
-**Escopo**: Somente US01–US05. Esta lista planeja trabalho futuro; nenhuma tarefa está implementada.  
+**Escopo**: US01–US05 e as evoluções de busca e favoritos solicitadas depois do MVP. As tarefas concluídas estão marcadas abaixo; testes no celular permanecem pendentes.
 **Ordem**: Segue as 13 etapas solicitadas pelo usuário. Por isso, US02 precede US01, e US04 precede US03, mesmo quando compartilham prioridade na especificação.  
 **Formato**: `[P]` marca trabalho que pode ocorrer em paralelo depois de suas dependências; `[USn]` identifica a história correspondente.
 
@@ -107,6 +107,12 @@
 **Objetivo**: Entregar instruções de uso e espaço para evidências visuais.
 
 - [x] T027 Preparar `README.md` na raiz com requisitos, comandos para executar `mobile/` no Expo Go, resumo das cinco user stories, localização da especificação e seções reservadas para screenshots das duas telas; concluído quando outra pessoa consegue iniciar o aplicativo seguindo o README e sabe onde inserir as capturas sem que imagens sejam inventadas.
+
+## Phase 11: Evoluções solicitadas — busca e favoritos
+
+- [x] T028 Adicionar busca por título e descrição na tela Minhas Ideias, combinada ao filtro ativo, com mensagem sem resultados e ação de limpar; concluído quando a lista reage ao texto digitado sem diferenciar maiúsculas ou acentos.
+- [x] T029 Adicionar favorito persistente a cada ideia, botão de estrela no cartão e botão Favoritas fixo ao lado dos filtros de status, preservando registros antigos e tratando erro de gravação; concluído quando a marcação só muda após salvar, continua após nova leitura e o botão permanece visível em largura de celular.
+- [ ] T030 Verificar busca e favoritos no celular e no navegador, incluindo visibilidade do botão Favoritas, combinação de filtros, ausência de resultados, dados antigos e persistência após reinício; concluído quando cada caso tem resultado e evidência registrados no roteiro de verificação.
 
 ## Dependencies & Execution Order
 

@@ -1,23 +1,30 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { ActivityIndicator, FlatList, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { IdeaCard } from '../components/IdeaCard';
 import { palette } from '../constants/palette';
 import { loadIdeas, saveIdeas } from '../features/ideas/storage';
-import { STATUS_OPTIONS, type StatusFilter, type TattooIdea } from '../features/ideas/types';
+import { STATUS_OPTIONS, type IdeaFilter, type TattooIdea } from '../features/ideas/types';
 
-const FILTERS: readonly StatusFilter[] = ['Todos', ...STATUS_OPTIONS];
+const FILTERS: readonly IdeaFilter[] = ['Todos', ...STATUS_OPTIONS];
+
+function normalizeSearch(value: string) {
+  return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
 
 export default function IdeasScreen() {
   const router = useRouter();
   const [ideas, setIdeas] = useState<TattooIdea[]>([]);
-  const [filter, setFilter] = useState<StatusFilter>('Todos');
+  const [filter, setFilter] = useState<IdeaFilter>('Todos');
+  const [search, setSearch] = useState('');
   const [loadState, setLoadState] = useState<'loading' | 'ready' | 'error'>('loading');
   const [actionError, setActionError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [favoritingId, setFavoritingId] = useState<string | null>(null);
   const [pendingDeletion, setPendingDeletion] = useState<TattooIdea | null>(null);
+  const mutationInProgress = useRef(false);
 
   useFocusEffect(useCallback(() => {
     let active = true;
@@ -45,10 +52,18 @@ export default function IdeasScreen() {
     }
   }
 
-  const visibleIdeas = filter === 'Todos' ? ideas : ideas.filter((idea) => idea.status === filter);
+  const searchTerm = normalizeSearch(search);
+  const visibleIdeas = ideas.filter((idea) => {
+    if (filter === 'Favoritas' && !idea.favorite) return false;
+    if (filter !== 'Todos' && filter !== 'Favoritas' && idea.status !== filter) return false;
+    if (!searchTerm) return true;
+    return normalizeSearch(idea.title).includes(searchTerm) || normalizeSearch(idea.description).includes(searchTerm);
+  });
+  const showingResults = filter !== 'Todos' || searchTerm.length > 0;
 
   async function deleteIdea(idea: TattooIdea) {
-    if (deletingId || loadState !== 'ready') return;
+    if (mutationInProgress.current || loadState !== 'ready') return;
+    mutationInProgress.current = true;
     setDeletingId(idea.id);
     setActionError(null);
     const nextIdeas = ideas.filter((item) => item.id !== idea.id);
@@ -58,7 +73,25 @@ export default function IdeasScreen() {
     } catch {
       setActionError('Não foi possível excluir a ideia. Tente novamente.');
     } finally {
+      mutationInProgress.current = false;
       setDeletingId(null);
+    }
+  }
+
+  async function toggleFavorite(idea: TattooIdea) {
+    if (mutationInProgress.current || loadState !== 'ready') return;
+    mutationInProgress.current = true;
+    setFavoritingId(idea.id);
+    setActionError(null);
+    const nextIdeas = ideas.map((item) => item.id === idea.id ? { ...item, favorite: !item.favorite } : item);
+    try {
+      await saveIdeas(nextIdeas);
+      setIdeas(nextIdeas);
+    } catch {
+      setActionError('Não foi possível atualizar os favoritos. Tente novamente.');
+    } finally {
+      mutationInProgress.current = false;
+      setFavoritingId(null);
     }
   }
 
@@ -75,16 +108,26 @@ export default function IdeasScreen() {
 
   function renderEmpty() {
     const hasIdeas = ideas.length > 0;
+    const hasSearch = searchTerm.length > 0;
+    const searchScope = filter === 'Favoritas' ? ' entre as favoritas' : filter === 'Todos' ? '' : ' em ' + filter;
+    const emptyTitle = hasSearch ? 'Nenhuma ideia encontrada' : !hasIdeas ? 'O papel ainda está em branco' : filter === 'Favoritas' ? 'Nenhuma favorita por aqui' : 'Nenhuma ideia por aqui';
+    const emptyText = hasSearch
+      ? `Não encontramos ideias para “${search.trim()}”${searchScope}. Tente outro termo ou limpe a busca.`
+      : !hasIdeas
+        ? 'Toda tatuagem começa com um traço. Registre a sua primeira ideia.'
+        : filter === 'Favoritas'
+          ? 'Toque na estrela de uma ideia para adicioná-la aos favoritos.'
+          : 'Não há desenhos com esse status. Escolha outro filtro para continuar.';
     return (
       <View style={styles.emptyCard}>
-        <Text style={styles.emptyMark}>{hasIdeas ? '⌕' : '✦'}</Text>
-        <Text style={styles.emptyTitle}>{hasIdeas ? 'Nenhuma ideia por aqui' : 'O papel ainda está em branco'}</Text>
-        <Text style={styles.emptyText}>
-          {hasIdeas
-            ? 'Não há desenhos com esse status. Escolha outro filtro para continuar.'
-            : 'Toda tatuagem começa com um traço. Registre a sua primeira ideia.'}
-        </Text>
-        {!hasIdeas ? (
+        <Text style={styles.emptyMark}>{hasSearch || hasIdeas ? '⌕' : '✦'}</Text>
+        <Text style={styles.emptyTitle}>{emptyTitle}</Text>
+        <Text style={styles.emptyText}>{emptyText}</Text>
+        {hasSearch ? (
+          <Pressable accessibilityRole="button" onPress={() => setSearch('')} style={styles.emptyButton}>
+            <Text style={styles.emptyButtonText}>Limpar busca</Text>
+          </Pressable>
+        ) : !hasIdeas ? (
           <Pressable accessibilityRole="button" onPress={() => router.push('/idea')} style={styles.emptyButton}>
             <Text style={styles.emptyButtonText}>Cadastrar ideia</Text>
           </Pressable>
@@ -130,25 +173,60 @@ export default function IdeasScreen() {
         <>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Coleção</Text>
-            <Text style={styles.count}>{ideas.length} {ideas.length === 1 ? 'ideia' : 'ideias'}</Text>
+            <Text style={styles.count}>
+              {showingResults
+                ? `${visibleIdeas.length} ${visibleIdeas.length === 1 ? 'resultado' : 'resultados'}`
+                : `${ideas.length} ${ideas.length === 1 ? 'ideia' : 'ideias'}`}
+            </Text>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow} style={styles.filterScroll}>
-            {FILTERS.map((option) => {
-              const selected = filter === option;
-              return (
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={`Filtrar: ${option}`}
-                  accessibilityState={{ selected }}
-                  key={option}
-                  onPress={() => setFilter(option)}
-                  style={[styles.filterChip, selected && styles.filterChipSelected]}
-                >
-                  <Text style={[styles.filterText, selected && styles.filterTextSelected]}>{option}</Text>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
+          <View style={styles.searchBox}>
+            <Text style={styles.searchIcon}>⌕</Text>
+            <TextInput
+              accessibilityLabel="Buscar ideias por título ou descrição"
+              autoCapitalize="none"
+              autoCorrect={false}
+              onChangeText={setSearch}
+              placeholder="Buscar por título ou descrição..."
+              placeholderTextColor="#938B81"
+              returnKeyType="search"
+              style={styles.searchInput}
+              value={search}
+            />
+            {search.length > 0 ? (
+              <Pressable accessibilityRole="button" accessibilityLabel="Limpar busca" onPress={() => setSearch('')} style={styles.clearSearch}>
+                <Text style={styles.clearSearchText}>Limpar</Text>
+              </Pressable>
+            ) : null}
+          </View>
+          <View style={styles.filterBar}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow} style={styles.filterScroll}>
+              {FILTERS.map((option) => {
+                const selected = filter === option;
+                return (
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`Filtrar: ${option}`}
+                    accessibilityState={{ selected }}
+                    key={option}
+                    onPress={() => setFilter(option)}
+                    style={[styles.filterChip, selected && styles.filterChipSelected]}
+                  >
+                    <Text style={[styles.filterText, selected && styles.filterTextSelected]}>{option}</Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Mostrar apenas ideias favoritas"
+              accessibilityState={{ selected: filter === 'Favoritas' }}
+              onPress={() => setFilter(filter === 'Favoritas' ? 'Todos' : 'Favoritas')}
+              style={[styles.filterChip, styles.favoriteFilter, filter === 'Favoritas' && styles.filterChipSelected]}
+            >
+              <Text style={[styles.favoriteFilterIcon, filter === 'Favoritas' && styles.filterTextSelected]}>★</Text>
+              <Text style={[styles.filterText, filter === 'Favoritas' && styles.filterTextSelected]}>Favoritas</Text>
+            </Pressable>
+          </View>
           {actionError ? <Text accessibilityLiveRegion="polite" style={styles.actionError}>{actionError}</Text> : null}
           <FlatList
             contentContainerStyle={styles.listContent}
@@ -157,10 +235,11 @@ export default function IdeasScreen() {
             ListEmptyComponent={renderEmpty}
             renderItem={({ item }) => (
               <IdeaCard
-                disabled={deletingId !== null}
+                disabled={deletingId !== null || favoritingId !== null}
                 idea={item}
                 onDelete={() => confirmDelete(item)}
                 onEdit={() => router.push({ pathname: '/idea', params: { id: item.id } })}
+                onToggleFavorite={() => { void toggleFavorite(item); }}
               />
             )}
           />
@@ -214,12 +293,20 @@ const styles = StyleSheet.create({
   sectionHeader: { marginHorizontal: 22, marginTop: 7, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
   sectionTitle: { color: palette.ink, fontFamily: 'serif', fontSize: 23 },
   count: { color: palette.muted, fontSize: 11, fontWeight: '700' },
-  filterScroll: { flexGrow: 0, marginTop: 14, marginBottom: 12 },
-  filterRow: { paddingHorizontal: 22, gap: 8 },
+  searchBox: { maxWidth: 520, marginHorizontal: 22, marginTop: 14, borderWidth: 1, borderColor: palette.line, backgroundColor: palette.card, borderRadius: 13, minHeight: 48, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 13 },
+  searchIcon: { color: palette.accent, fontSize: 22, marginRight: 8, lineHeight: 25 },
+  searchInput: { flex: 1, color: palette.ink, fontSize: 13, paddingVertical: 12, minWidth: 0 },
+  clearSearch: { paddingHorizontal: 4, paddingVertical: 8 },
+  clearSearchText: { color: palette.accent, fontSize: 12, fontWeight: '800' },
+  filterBar: { flexDirection: 'row', alignItems: 'center', maxWidth: 750, marginHorizontal: 22, marginTop: 14, marginBottom: 12, gap: 8 },
+  filterScroll: { flex: 1, minWidth: 0 },
+  filterRow: { gap: 8, paddingRight: 4 },
   filterChip: { borderColor: palette.line, borderWidth: 1, borderRadius: 99, backgroundColor: palette.card, paddingHorizontal: 14, paddingVertical: 10 },
   filterChipSelected: { backgroundColor: palette.accent, borderColor: palette.accent },
   filterText: { color: palette.ink, fontSize: 12, fontWeight: '700' },
   filterTextSelected: { color: palette.card },
+  favoriteFilter: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  favoriteFilterIcon: { color: palette.accent, fontSize: 13 },
   listContent: { paddingHorizontal: 22, paddingBottom: 34, flexGrow: 1 },
   emptyCard: { backgroundColor: palette.card, borderWidth: 1, borderColor: palette.line, borderRadius: 22, marginTop: 4, padding: 26, alignItems: 'center' },
   emptyMark: { color: palette.accent, fontSize: 34, marginBottom: 8 },

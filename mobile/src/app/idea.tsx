@@ -97,7 +97,7 @@ export default function IdeaFormScreen() {
       } else {
         let id = Crypto.randomUUID();
         while (ideas.some((item) => item.id === id)) id = Crypto.randomUUID();
-        nextIdeas = [{ id, ...values, createdAt: new Date().toISOString() }, ...ideas];
+        nextIdeas = [{ id, ...values, createdAt: new Date().toISOString(), favorite: false }, ...ideas];
       }
       await saveIdeas(nextIdeas);
       returnToList();

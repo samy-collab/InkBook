@@ -4,7 +4,7 @@
 
 ## Entidade TattooIdea
 
-Uma ideia é um registro local independente; não há usuário, conta, imagem ou relação com servidor. O tipo TypeScript `TattooIdea` conterá exatamente os campos abaixo.
+Uma ideia é um registro local independente; não há usuário, conta, imagem ou relação com servidor. O tipo TypeScript `TattooIdea` contém os campos abaixo, incluindo a marcação de favorito adicionada depois do MVP inicial.
 
 | Campo | Tipo planejado | Regra |
 |-------|----------------|-------|
@@ -15,6 +15,7 @@ Uma ideia é um registro local independente; não há usuário, conta, imagem ou
 | `difficulty` | união de strings | Uma das três opções de dificuldade. |
 | `status` | união de strings | Um dos três estados de andamento. |
 | `createdAt` | string | Instante de cadastro em formato ISO 8601; imutável na edição. |
+| `favorite` | boolean | Inicia falso; pode ser alternado no cartão e permanece salvo. |
 
 ### Domínios permitidos
 
@@ -37,7 +38,8 @@ O catálogo é um array de `TattooIdea` armazenado sob a chave `@inkbook/ideas/v
 ### Invariantes
 
 - Identificadores não se repetem no catálogo.
-- Toda ideia tem os sete campos e valores válidos nos domínios definidos.
+- Toda ideia carregada na interface tem os oito campos e valores válidos nos domínios definidos.
+- Registros antigos sem a marcação de favorito são carregados com valor falso, sem perda dos demais campos.
 - O catálogo carregado está em ordem de cadastro, do mais recente para o mais antigo.
 - A edição substitui somente a ideia encontrada pelo `id` e não altera `id`, `createdAt` ou posição.
 - A exclusão remove somente a ideia confirmada; depois da gravação bem-sucedida, ela não reaparece após reiniciar o aplicativo.

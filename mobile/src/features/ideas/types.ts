@@ -17,7 +17,7 @@ export const STATUS_OPTIONS = [
 export type TattooStyle = (typeof STYLE_OPTIONS)[number];
 export type TattooDifficulty = (typeof DIFFICULTY_OPTIONS)[number];
 export type TattooStatus = (typeof STATUS_OPTIONS)[number];
-export type StatusFilter = TattooStatus | 'Todos';
+export type IdeaFilter = TattooStatus | 'Todos' | 'Favoritas';
 
 export type TattooIdea = {
   id: string;
@@ -27,6 +27,7 @@ export type TattooIdea = {
   difficulty: TattooDifficulty;
   status: TattooStatus;
   createdAt: string;
+  favorite: boolean;
 };
 
 export type IdeaDraft = {

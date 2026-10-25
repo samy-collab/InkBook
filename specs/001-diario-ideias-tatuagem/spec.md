@@ -183,3 +183,10 @@ Como usuário, quero filtrar ideias pelo status, para encontrar rapidamente os d
 - Os filtros atuam sobre as ideias já salvas; Todos é a seleção inicial ao abrir Minhas Ideias.
 - A exclusão confirmada é permanente dentro do armazenamento local do aplicativo, sem lixeira ou desfazer nesta versão.
 - A disponibilidade de armazenamento local no celular é necessária para persistir as ideias; não há serviço externo como dependência.
+
+## Evoluções solicitadas após as cinco histórias iniciais
+
+- **FR-016 — Busca**: Minhas Ideias DEVE buscar ideias pelo título ou pela descrição enquanto o usuário digita, sem diferenciar maiúsculas ou acentos. A busca DEVE funcionar junto ao filtro selecionado e preservar a ordem da lista. Se não houver correspondências, DEVE mostrar mensagem de ausência de resultados e permitir limpar a busca.
+- **FR-017 — Favoritos**: Cada cartão DEVE permitir marcar e desmarcar a ideia como favorita. Minhas Ideias DEVE oferecer um botão Favoritas sempre visível ao lado dos filtros de status, que exibe só ideias marcadas e mostra uma mensagem específica quando não tiver resultados. A marcação DEVE permanecer após fechar e reabrir o aplicativo; ideias salvas antes desta evolução começam como não favoritas. Falha ao salvar a marcação DEVE manter o estado anterior e mostrar erro.
+
+**Cenários de aceite adicionais**: Buscar parte do título ou da descrição encontra a ideia; pesquisar sem acentos encontra texto acentuado; combinar busca e status mostra somente itens que atendem a ambos; termo inexistente mostra a mensagem e a ação de limpar. Marcar uma ideia faz com que apareça em Favoritas; desmarcar remove desse filtro; reiniciar mantém o estado salvo; uma ideia anterior à evolução continua disponível.

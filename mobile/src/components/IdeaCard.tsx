@@ -7,6 +7,7 @@ type Props = {
   idea: TattooIdea;
   onEdit: () => void;
   onDelete: () => void;
+  onToggleFavorite: () => void;
   disabled?: boolean;
 };
 
@@ -16,14 +17,24 @@ const statusColors = {
   Concluído: { backgroundColor: palette.sageSoft, color: palette.sage },
 } as const;
 
-export function IdeaCard({ idea, onEdit, onDelete, disabled = false }: Props) {
+export function IdeaCard({ idea, onEdit, onDelete, onToggleFavorite, disabled = false }: Props) {
   const statusColor = statusColors[idea.status];
 
   return (
     <View style={styles.card}>
       <View style={styles.topLine}>
         <Text style={styles.eyebrow}>{idea.style.toUpperCase()}</Text>
-        <Text style={styles.mark}>✳</Text>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={(idea.favorite ? 'Remover ' : 'Adicionar ') + idea.title + (idea.favorite ? ' dos favoritos' : ' aos favoritos')}
+          accessibilityState={{ checked: idea.favorite, disabled }}
+          disabled={disabled}
+          hitSlop={8}
+          onPress={onToggleFavorite}
+          style={({ pressed }) => [styles.favoriteButton, pressed && styles.pressed]}
+        >
+          <Text style={styles.favoriteMark}>{idea.favorite ? '★' : '☆'}</Text>
+        </Pressable>
       </View>
 
       <Text style={styles.title}>{idea.title}</Text>
@@ -73,7 +84,8 @@ const styles = StyleSheet.create({
   },
   topLine: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   eyebrow: { color: palette.accent, fontSize: 10, fontWeight: '800', letterSpacing: 2 },
-  mark: { color: palette.accent, fontSize: 21, lineHeight: 24 },
+  favoriteButton: { minWidth: 34, minHeight: 34, alignItems: 'center', justifyContent: 'center' },
+  favoriteMark: { color: palette.accent, fontSize: 27, lineHeight: 32 },
   title: { color: palette.ink, fontFamily: 'serif', fontSize: 26, lineHeight: 32, marginTop: 10 },
   details: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', marginTop: 24, gap: 12 },
   detail: { gap: 4 },

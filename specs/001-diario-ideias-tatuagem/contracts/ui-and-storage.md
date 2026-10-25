@@ -21,6 +21,8 @@ A rota funcional de formulário é única. Um `id` desconhecido no modo edição
 
 **Estados vazios**: Sem ideias cadastradas, mostrar mensagem de catálogo vazio e acesso ao cadastro. Com ideias cadastradas e filtro sem correspondências, mostrar mensagem de ausência de resultados. Após salvar, alterar status ou excluir, os itens e estados vazios refletem os dados persistidos.
 
+**Busca e favoritos**: Buscar em título e descrição sem diferenciar maiúsculas ou acentos, em conjunto com o filtro ativo. Mostrar ausência de resultados e ação para limpar quando a busca não encontrar ideias. Cada cartão tem uma estrela para marcar ou desmarcar favorito; o botão Favoritas permanece visível ao lado dos filtros de status, mostra somente as ideias marcadas e informa quando estiver vazio. Um segundo toque no botão volta a Todos. Só atualizar a marcação visual depois de salvar com sucesso; falha de gravação mantém a marcação anterior e mostra erro. Registros anteriores sem esse campo são tratados como não favoritos.
+
 **Exclusão**: Antes de remover, apresentar confirmação que identifique a ideia, com ações cancelar e excluir. Cancelar não grava nem remove. Confirmar grava o catálogo sem o item; durante a operação, impedir repetição. Após sucesso, remover o cartão; em falha, manter o cartão e mostrar erro sem confirmação de exclusão.
 
 ## Cadastro/Edição

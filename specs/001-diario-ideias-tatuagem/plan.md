@@ -16,7 +16,7 @@ Aplicativo móvel local para as cinco histórias US01–US05: cadastrar, listar,
 **Target Platform**: Android físico com Expo Go compatível com o SDK instalado e prévia no Chrome; interface adaptável a diferentes tamanhos de tela. O funcionamento em iPhone físico depende de uma distribuição de Expo Go compatível com o SDK escolhido e não é critério de conclusão deste MVP.
 **Project Type**: Aplicativo móvel Expo no subdiretório `mobile/` de um repositório Spec Kit.  
 **Performance Goals**: Abrir lista e aplicar filtro em até 2 segundos com até 100 ideias; cadastro local concluível em até 2 minutos no teste de usabilidade da especificação.  
-**Constraints**: Expo Go sem compilação nativa personalizada; português brasileiro; dados locais; somente duas telas funcionais e cinco user stories; sem backend, autenticação, imagens ou nuvem.  
+**Constraints**: Expo Go sem compilação nativa personalizada; português brasileiro; dados locais; duas telas funcionais, cinco user stories iniciais e as evoluções de busca e favoritos solicitadas depois; sem backend, autenticação, imagens ou nuvem.
 **Scale/Scope**: Um usuário por instalação, até 100 ideias no cenário de desempenho, três status, cinco estilos e três dificuldades.
 
 **Controle de versões**: O scaffold efetivamente criou Expo SDK 58.0.19; o Node 20 padrão do terminal não atende ao mínimo do SDK 58, então a implementação e as verificações usam Node 24.22.1 já instalado e registrado em `mobile/.nvmrc`. Os módulos nativos foram instalados com `npx expo install`; `npx expo install --check` e `expo-doctor` confirmaram compatibilidade. A versão do Expo Go no aparelho ainda deve ser conferida pelo usuário no teste físico.
@@ -28,12 +28,12 @@ Aplicativo móvel local para as cinco histórias US01–US05: cadastrar, listar,
 | Princípio | Evidência no plano | Estado |
 |-----------|--------------------|--------|
 | I. Tecnologia e compatibilidade com Expo Go | Expo, React Native e TypeScript; dependências instaladas segundo o SDK; validação em Android físico com Expo Go. | PASSA |
-| II. MVP orientado por user stories | Somente US01–US05; sem backend, autenticação, API externa ou escopo adicional. | PASSA |
+| II. MVP orientado por user stories | US01–US05 e as evoluções de busca e favoritos autorizadas depois; sem backend, autenticação ou API externa. | PASSA |
 | III. Interface e navegação | Duas telas via Expo Router; FlatList para a lista; textos em português brasileiro. | PASSA |
 | IV. Formulário e persistência local | Validação simples; AsyncStorage isolado; erros de leitura e gravação visíveis sem confirmar operação falha. | PASSA |
 | V. Código simples e verificação | Estrutura pequena por responsabilidade, TypeScript e roteiro de aceite com registro de resultados. | PASSA |
 
-Nenhuma exceção à constituição é necessária. A limitação do Expo Go em iPhone físico para SDKs recentes está descrita em `research.md`; a verificação obrigatória em dispositivo físico será feita no Android.
+Nenhuma exceção à constituição é necessária. Busca e favoritos foram autorizados pelo usuário após o escopo inicial das cinco histórias. A limitação do Expo Go em iPhone físico para SDKs recentes está descrita em `research.md`; a verificação obrigatória em dispositivo físico será feita no Android.
 
 ## Project Structure
 
@@ -97,4 +97,8 @@ Decisões, alternativas e fontes oficiais estão em [research.md](research.md). 
 - [contracts/ui-and-storage.md](contracts/ui-and-storage.md) define ações e estados observáveis das duas telas e o contrato da camada local.
 - [quickstart.md](quickstart.md) registra comandos e verificações para a implementação posterior.
 
-**Reavaliação da constituição após o desenho**: PASSA nos cinco princípios. O modelo usa dados locais e os contratos cobrem validação, falhas, navegação, FlatList e persistência. Não há ampliação funcional além de US01–US05.
+**Reavaliação da constituição após o desenho**: PASSA nos cinco princípios. O modelo usa dados locais e os contratos cobrem validação, falhas, navegação, FlatList e persistência. A ampliação posterior de busca e favoritos permanece nas duas telas e no armazenamento local.
+
+## Evolução posterior
+
+A busca usa título e descrição em memória, após normalizar maiúsculas e acentos, junto ao filtro ativo. Favoritos usam um campo booleano no catálogo local existente. Na leitura, registros anteriores sem esse campo recebem falso em memória; a marcação só aparece como salva após a gravação local concluir. O filtro Favoritas e os estados vazios são apresentados na lista. A verificação manual foi adicionada ao roteiro de US05 e à tarefa T030.

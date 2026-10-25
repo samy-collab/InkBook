@@ -45,6 +45,8 @@ npx expo-doctor@latest
 
 Os critérios completos estão na [especificação](specs/001-diario-ideias-tatuagem/spec.md). O [plano](specs/001-diario-ideias-tatuagem/plan.md), as [tarefas](specs/001-diario-ideias-tatuagem/tasks.md) e o [guia de verificação](specs/001-diario-ideias-tatuagem/quickstart.md) ficam no mesmo diretório da feature.
 
+Na coleção, a busca encontra ideias pelo título ou descrição e funciona junto aos filtros. A estrela do cartão marca favoritos; o botão Favoritas, sempre visível ao lado dos filtros de status, reúne as ideias marcadas. Toque nele novamente para voltar a Todos. Busca e favoritos foram solicitados após as cinco histórias iniciais e estão registrados na especificação.
+
 ## Estrutura
 
 ```text
@@ -62,4 +64,4 @@ specs/001-diario-ideias-tatuagem/  especificação e planejamento
 
 ## Verificação manual pendente
 
-No celular, conferir cadastro válido e inválido, lista vazia e ordenação, permanência após fechar e reabrir, edição e mudança de status, cancelamento e confirmação da exclusão, quatro filtros e mensagem sem resultados. Também conferir legibilidade, teclado e tamanhos de tela. Falhas de armazenamento e os critérios de tempo/usabilidade têm roteiros próprios nas tarefas de verificação e ainda não foram validados em dispositivo físico.
+No celular, conferir cadastro válido e inválido, lista vazia e ordenação, permanência após fechar e reabrir, edição e mudança de status, cancelamento e confirmação da exclusão, filtros por status, busca e favoritos com mensagem sem resultados. Também conferir legibilidade, teclado e tamanhos de tela. Falhas de armazenamento e os critérios de tempo/usabilidade têm roteiros próprios nas tarefas de verificação e ainda não foram validados em dispositivo físico.

@@ -9,7 +9,9 @@ import {
 
 const STORAGE_KEY = '@inkbook/ideas/v1';
 
-function isTattooIdea(value: unknown): value is TattooIdea {
+type StoredTattooIdea = Omit<TattooIdea, 'favorite'> & { favorite?: boolean };
+
+function isTattooIdea(value: unknown): value is StoredTattooIdea {
   if (typeof value !== 'object' || value === null) return false;
   const idea = value as Record<string, unknown>;
   return (
@@ -22,11 +24,12 @@ function isTattooIdea(value: unknown): value is TattooIdea {
     DIFFICULTY_OPTIONS.some((option) => option === idea.difficulty) &&
     STATUS_OPTIONS.some((option) => option === idea.status) &&
     typeof idea.createdAt === 'string' &&
-    !Number.isNaN(Date.parse(idea.createdAt))
+    !Number.isNaN(Date.parse(idea.createdAt)) &&
+    (idea.favorite === undefined || typeof idea.favorite === 'boolean')
   );
 }
 
-function isIdeaCatalog(value: unknown): value is TattooIdea[] {
+function isIdeaCatalog(value: unknown): value is StoredTattooIdea[] {
   if (!Array.isArray(value)) return false;
   const ids = new Set<string>();
   for (const idea of value) {
@@ -42,14 +45,14 @@ export async function loadIdeas(): Promise<TattooIdea[]> {
     if (raw === null) return [];
     const data: unknown = JSON.parse(raw);
     if (!isIdeaCatalog(data)) throw new Error('Catálogo inválido');
-    return data;
+    return data.map((idea) => ({ ...idea, favorite: idea.favorite ?? false }));
   } catch {
     throw new Error('Não foi possível carregar suas ideias. Tente novamente.');
   }
 }
 
 export async function saveIdeas(ideas: TattooIdea[]): Promise<void> {
-  if (!isIdeaCatalog(ideas)) {
+  if (!isIdeaCatalog(ideas) || ideas.some((idea) => typeof idea.favorite !== 'boolean')) {
     throw new Error('Os dados da ideia são inválidos e não foram salvos.');
   }
   try {
