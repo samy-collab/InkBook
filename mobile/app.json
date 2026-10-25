@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "InkBook",
+    "slug": "inkbook",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "inkbook",
+    "userInterfaceStyle": "light",
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F5F1E9"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
