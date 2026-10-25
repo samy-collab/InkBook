@@ -5,21 +5,21 @@
 
 ## Summary
 
-Planejar um aplicativo móvel local para as cinco histórias US01–US05: cadastrar, listar, atualizar status, editar, excluir e filtrar ideias de tatuagens. Na implementação, criar o projeto Expo em `mobile/`, dentro deste repositório, preservando `.specify/` e `specs/`. Usar TypeScript, Expo Router com duas telas funcionais, FlatList, AsyncStorage, StyleSheet e componentes pequenos reutilizáveis. A tela de formulário atende cadastro e edição; uma camada de armazenamento concentra leitura e gravação. Nenhum código do aplicativo é criado nesta etapa.
+Aplicativo móvel local para as cinco histórias US01–US05: cadastrar, listar, atualizar status, editar, excluir e filtrar ideias de tatuagens. O projeto Expo fica em `mobile/`, dentro deste repositório, preservando `.specify/` e `specs/`. Usa TypeScript, Expo Router com duas telas funcionais, FlatList, AsyncStorage, StyleSheet e componentes pequenos reutilizáveis. A tela de formulário atende cadastro e edição; uma camada de armazenamento concentra leitura e gravação.
 
 ## Technical Context
 
-**Language/Version**: TypeScript fornecido pelo template Expo; fixar a versão efetiva pelo `package-lock.json` gerado.  
-**Primary Dependencies**: React Native, Expo SDK 57 como alvo inicial de criação, Expo Router do template, `@react-native-async-storage/async-storage` e `expo-crypto` instalados com `npx expo install`; React Hooks nativos; sem Context API inicialmente.  
+**Language/Version**: TypeScript do template Expo e Node.js 24 para a ferramenta local; versões efetivas registradas em `mobile/package-lock.json`.
+**Primary Dependencies**: React Native, Expo SDK 58 instalado pelo scaffold, Expo Router, `@react-native-async-storage/async-storage` e `expo-crypto` instalados com `npx expo install`; React Hooks nativos; sem Context API. A prévia no Chrome acrescenta `react-native-web` e `react-dom` compatíveis com o mesmo SDK.
 **Storage**: Uma chave de AsyncStorage para o catálogo local serializado; nenhum serviço remoto.  
 **Testing**: Verificação de tipos, `npx expo install --check`, `npx expo-doctor@latest`, testes focados na validação e no armazenamento se a configuração de testes for adicionada, e roteiro manual das cinco histórias em dispositivo Android físico com Expo Go.  
-**Target Platform**: Android físico com Expo Go compatível com o SDK instalado; interface adaptável a diferentes tamanhos de tela. O funcionamento em iPhone físico depende de uma distribuição de Expo Go compatível com o SDK escolhido e não é critério de conclusão deste MVP.  
+**Target Platform**: Android físico com Expo Go compatível com o SDK instalado e prévia no Chrome; interface adaptável a diferentes tamanhos de tela. O funcionamento em iPhone físico depende de uma distribuição de Expo Go compatível com o SDK escolhido e não é critério de conclusão deste MVP.
 **Project Type**: Aplicativo móvel Expo no subdiretório `mobile/` de um repositório Spec Kit.  
 **Performance Goals**: Abrir lista e aplicar filtro em até 2 segundos com até 100 ideias; cadastro local concluível em até 2 minutos no teste de usabilidade da especificação.  
 **Constraints**: Expo Go sem compilação nativa personalizada; português brasileiro; dados locais; somente duas telas funcionais e cinco user stories; sem backend, autenticação, imagens ou nuvem.  
 **Scale/Scope**: Um usuário por instalação, até 100 ideias no cenário de desempenho, três status, cinco estilos e três dificuldades.
 
-**Controle de versões**: Não existe SDK Expo instalado neste repositório nesta data. O comando de criação documentado atualmente produz SDK 57 sem `--template`; antes de programar, conferir a versão gerada em `mobile/package.json` e a versão do Expo Go do aparelho. Instalar módulos nativos apenas com `npx expo install`, conferir compatibilidade e registrar as versões resolvidas no lockfile. Se o template padrão ou o aparelho mudar, alinhar as versões antes da implementação; não fixar versões de React Native ou módulos nativos manualmente.
+**Controle de versões**: O scaffold efetivamente criou Expo SDK 58.0.19; o Node 20 padrão do terminal não atende ao mínimo do SDK 58, então a implementação e as verificações usam Node 24.22.1 já instalado e registrado em `mobile/.nvmrc`. Os módulos nativos foram instalados com `npx expo install`; `npx expo install --check` e `expo-doctor` confirmaram compatibilidade. A versão do Expo Go no aparelho ainda deve ser conferida pelo usuário no teste físico.
 
 ## Constitution Check
 
@@ -79,7 +79,7 @@ mobile/                         # Novo projeto Expo criado na implementação
 
 ## Implementation Approach
 
-1. Criar `mobile/` com o template padrão do Expo, verificar SDK e Expo Go, remover telas demonstrativas e manter o lockfile; instalar AsyncStorage e expo-crypto com a CLI Expo.
+1. Criar `mobile/` com o template padrão do Expo, verificar SDK e Expo Go, remover telas demonstrativas e manter o lockfile; instalar AsyncStorage e expo-crypto com a CLI Expo. Executado com SDK 58 e Node 24; confirmação no Expo Go físico permanece pendente.
 2. Definir `TattooIdea`, uniões de estilo, dificuldade e status e constantes de opções. `id` será UUID, `createdAt` será o instante ISO de cadastro e ficará imutável nas edições.
 3. Implementar a camada local com `loadIdeas` e `saveIdeas`: chave ausente corresponde a catálogo vazio; erro de leitura ou conteúdo inválido corresponde a estado de erro e bloqueia alteração até nova leitura. Atualizar a interface somente depois da gravação concluída; impedir envio simultâneo durante a operação.
 4. Implementar validação reutilizada por cadastro e edição: título com no mínimo três caracteres após `trim`, estilo e dificuldade obrigatórios, status limitado às três opções; descrição aceita vazia.

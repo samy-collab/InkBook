@@ -1,20 +1,20 @@
 # Guia de execução e verificação: InkBook
 
-**Estado atual**: Somente planejamento. Os comandos abaixo são para a etapa de implementação; ainda não existe `mobile/` nem aplicativo programado.
+**Estado atual**: O aplicativo existe em `mobile/` com Expo SDK 58. A execução em celular físico ainda não foi verificada.
 
-## Preparação do projeto na implementação
+## Preparação em um clone do repositório
 
-Executar na raiz deste repositório, preservando `.specify/`, `specs/` e `AGENTS.md`:
+Executar na raiz deste repositório, preservando `.specify/`, `specs/` e `AGENTS.md`. É necessário Node.js 22.13 ou superior; este projeto registra Node 24 em `mobile/.nvmrc`:
 
 ```bash
-npx create-expo-app@latest mobile --no-agents-md
 cd mobile
-npx expo install @react-native-async-storage/async-storage expo-crypto
+nvm use
+npm install
 npx expo install --check
 npx expo-doctor@latest
 ```
 
-Em 2026-10-25, o template padrão de `create-expo-app@latest` é documentado como SDK 57 durante a transição para SDK 58. Confirmar o SDK real em `mobile/package.json` antes de escrever código e usar o Expo Go correspondente no aparelho. Se o padrão tiver mudado, selecionar explicitamente um template compatível com o aparelho de avaliação, sem misturar versões de dependências. O projeto ficará em `mobile/`, dentro deste repositório, para preservar os artefatos Spec Kit. Remover as telas e recursos de demonstração do template que não correspondem às cinco histórias.
+O SDK efetivo está em `mobile/package.json`. Usar Expo Go compatível com SDK 58 no aparelho Android de avaliação; os arquivos do Spec Kit ficam na raiz e não precisam ser recriados.
 
 ## Execução posterior
 
@@ -22,10 +22,12 @@ Depois que o aplicativo existir:
 
 ```bash
 cd mobile
-npx expo start
+npx expo start --port 8082
 ```
 
-Abrir no Expo Go de um dispositivo Android físico com SDK compatível. A versão do Expo Go pode ser escolhida em [expo.dev/go](https://expo.dev/go). A documentação oficial explica as diferenças de distribuição em [incompatibilidade de versões](https://docs.expo.dev/troubleshooting/expo-go-version-mismatch/); o Expo Go da App Store no iPhone não atende aos SDKs 55 ou posteriores sem outra forma de distribuição.
+O comando mostra um QR code no terminal e não abre o aplicativo automaticamente no computador. A porta 8081 estava ocupada neste ambiente; 8082 evita a pergunta interativa. Deixe o terminal aberto e, no Android, escaneie o código pelo Expo Go. Celular e computador devem usar a mesma rede Wi-Fi. A versão do Expo Go pode ser escolhida em [expo.dev/go](https://expo.dev/go). A documentação oficial explica as diferenças de distribuição em [incompatibilidade de versões](https://docs.expo.dev/troubleshooting/expo-go-version-mismatch/).
+
+Para conferir no Chrome, pare o servidor anterior e inicie `npx expo start --web --port 8082 --clear` em `mobile/`. Essa prévia usa `react-native-web` e `react-dom` instalados pelo Expo; não substitui a verificação obrigatória no celular.
 
 ## Verificações para concluir a implementação
 

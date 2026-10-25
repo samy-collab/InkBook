@@ -1,15 +1,15 @@
 # Pesquisa técnica: InkBook
 
 **Data**: 2026-10-25  
-**Escopo**: decisões necessárias para planejar US01–US05; nenhum aplicativo foi criado nesta etapa.
+**Escopo**: decisões para US01–US05, atualizadas com a versão efetivamente criada na implementação.
 
 ## 1. Scaffold, SDK e Expo Go
 
-**Decisão**: Criar o projeto Expo em `mobile/` com o template padrão, que já inclui TypeScript e Expo Router e organiza as rotas em `src/app/`. Em 2026-10-25, usar como alvo inicial o SDK 57 para avaliação em Android físico com Expo Go, confirmar a versão efetiva após a criação e manter o `package-lock.json`. As versões de bibliotecas nativas serão selecionadas pela CLI do SDK instalado, não por números copiados de outro SDK.
+**Decisão**: O projeto Expo foi criado em `mobile/` com o template padrão, TypeScript, Expo Router e rotas em `src/app/`. A CLI efetivamente instalou SDK 58.0.19. Usar Node 24.22.1, já disponível neste ambiente, e manter o `package-lock.json`. As versões de bibliotecas nativas foram selecionadas pela CLI do SDK instalado.
 
-**Justificativa**: Não há `package.json` nem SDK Expo instalado no repositório. A documentação do Expo indica que, durante a transição para SDK 58, o comando de criação sem `--template` gera SDK 57 e é recomendado para uso em dispositivo físico. O template padrão inclui Expo Router e TypeScript. A versão de Expo Go precisa corresponder ao SDK da aplicação.
+**Justificativa**: Antes da implementação não havia SDK instalado. A documentação consultada indicava SDK 57 como padrão durante a transição, mas a execução de `create-expo-app@latest` retornou SDK 58. Como Node 24 já estava instalado, manter o SDK efetivo evitou uma recriação desnecessária. Expo Doctor e a checagem de dependências passaram; a versão de Expo Go precisa corresponder ao SDK da aplicação no teste físico.
 
-**Alternativas consideradas**: SDK 58 agora exigiria confirmar distribuição de Expo Go compatível no dispositivo físico; SDK 54 permitiria Expo Go da App Store no iPhone, mas adotaria SDK mais antigo. O alvo Android físico com SDK 57 atende à constituição sem fluxo de distribuição iOS. Se o aparelho de avaliação for um iPhone físico, a escolha de SDK precisará ser revista antes de criar o projeto.
+**Alternativas consideradas**: Recriar com SDK 57 seguiria o alvo inicial do plano, mas ainda dependeria de Expo Go correspondente no Android. SDK 54 adotaria versão mais antiga para possível uso no iPhone. A implementação mantém SDK 58 e deixa a compatibilidade no aparelho físico para verificação do usuário; se não houver Expo Go correspondente, será preciso alinhar SDK e aplicativo antes dessa avaliação.
 
 **Fontes**: [create-expo-app](https://docs.expo.dev/more/create-expo/), [criar projeto](https://docs.expo.dev/get-started/create-a-project/), [compatibilidade do Expo Go](https://docs.expo.dev/troubleshooting/expo-go-version-mismatch/).
 

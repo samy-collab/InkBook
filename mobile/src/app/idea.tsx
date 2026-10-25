@@ -26,25 +26,15 @@ export default function IdeaFormScreen() {
   const editId = typeof idParam === 'string' && idParam.length > 0 ? idParam : null;
   const [draft, setDraft] = useState<IdeaDraft>(EMPTY_DRAFT);
   const [errors, setErrors] = useState<IdeaErrors>({});
-  const [loadState, setLoadState] = useState<'loading' | 'ready' | 'error'>(isEditing ? 'loading' : 'ready');
-  const [loadError, setLoadError] = useState('');
+  const [loadState, setLoadState] = useState<'loading' | 'ready' | 'error'>(isEditing ? editId ? 'loading' : 'error' : 'ready');
+  const [loadError, setLoadError] = useState(editId || !isEditing ? '' : 'Esta ideia não foi encontrada.');
   const [saveError, setSaveError] = useState('');
   const [saving, setSaving] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
-    if (!isEditing) {
-      setDraft(EMPTY_DRAFT);
-      setLoadState('ready');
-      return;
-    }
-    if (!editId) {
-      setLoadError('Esta ideia não foi encontrada.');
-      setLoadState('error');
-      return;
-    }
+    if (!isEditing || !editId) return;
     let active = true;
-    setLoadState('loading');
     loadIdeas()
       .then((ideas) => {
         if (!active) return;
@@ -77,6 +67,11 @@ export default function IdeaFormScreen() {
     setSaveError('');
   }
 
+  function returnToList() {
+    if (router.canGoBack()) router.back();
+    else router.replace('/');
+  }
+
   async function save() {
     if (saving || loadState !== 'ready') return;
     const nextErrors = validateIdeaDraft(draft);
@@ -105,7 +100,7 @@ export default function IdeaFormScreen() {
         nextIdeas = [{ id, ...values, createdAt: new Date().toISOString() }, ...ideas];
       }
       await saveIdeas(nextIdeas);
-      router.replace('/');
+      returnToList();
     } catch (error) {
       setSaveError(error instanceof Error ? error.message : 'Não foi possível salvar a ideia. Tente novamente.');
     } finally {
@@ -116,7 +111,7 @@ export default function IdeaFormScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right', 'bottom']}>
       <View style={styles.topBar}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Voltar para Minhas Ideias" onPress={() => router.replace('/')} style={styles.backButton}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Voltar para Minhas Ideias" onPress={returnToList} style={styles.backButton}>
           <Text style={styles.backArrow}>‹</Text><Text style={styles.backText}>Voltar</Text>
         </Pressable>
         <Text style={styles.topBrand}>INKBOOK  ✳</Text>
@@ -129,7 +124,7 @@ export default function IdeaFormScreen() {
           <Text style={styles.errorTitle}>Algo saiu do traço</Text>
           <Text style={styles.stateText}>{loadError}</Text>
           {editId && loadError.startsWith('Não foi possível') ? (
-            <Pressable accessibilityRole="button" onPress={() => setRetryKey((key) => key + 1)} style={styles.retryButton}>
+            <Pressable accessibilityRole="button" onPress={() => { setLoadState('loading'); setRetryKey((key) => key + 1); }} style={styles.retryButton}>
               <Text style={styles.retryText}>Tentar novamente</Text>
             </Pressable>
           ) : null}

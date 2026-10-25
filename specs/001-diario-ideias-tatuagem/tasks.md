@@ -9,16 +9,16 @@
 
 **Objetivo**: Criar o projeto Expo dentro deste repositório e garantir dependências compatíveis com Expo Go.
 
-- [ ] T001 Inicializar o template padrão Expo com TypeScript e Expo Router em `mobile/package.json`, `mobile/package-lock.json` e `mobile/tsconfig.json`, mantendo `.specify/`, `specs/` e `AGENTS.md`; concluído quando o projeto nasce em `mobile/`, o SDK efetivo está identificado e nenhum arquivo do Spec Kit foi substituído.
-- [ ] T002 Instalar `@react-native-async-storage/async-storage` e `expo-crypto` via `npx expo install` e conferir Router/React Native em `mobile/package.json` e `mobile/package-lock.json`; concluído quando `npx expo install --check` e `npx expo-doctor@latest` não apontam incompatibilidades com o SDK e o Expo Go escolhido para Android físico.
+- [x] T001 Inicializar o template padrão Expo com TypeScript e Expo Router em `mobile/package.json`, `mobile/package-lock.json` e `mobile/tsconfig.json`, mantendo `.specify/`, `specs/` e `AGENTS.md`; concluído quando o projeto nasce em `mobile/`, o SDK efetivo está identificado e nenhum arquivo do Spec Kit foi substituído.
+- [x] T002 Instalar `@react-native-async-storage/async-storage` e `expo-crypto` via `npx expo install` e conferir Router/React Native em `mobile/package.json` e `mobile/package-lock.json`; concluído quando `npx expo install --check` e `npx expo-doctor@latest` não apontam incompatibilidades com o SDK e o Expo Go escolhido para Android físico.
 
 ## Phase 2: Foundational — etapas 3 a 5
 
 **Objetivo**: Preparar navegação, tipo compartilhado e armazenamento local antes das histórias.
 
-- [ ] T003 Configurar Stack do Expo Router e somente as rotas funcionais Minhas Ideias e Cadastro/Edição em `mobile/src/app/_layout.tsx`, `mobile/src/app/index.tsx` e `mobile/src/app/idea.tsx`, removendo rotas demonstrativas do template; concluído quando é possível ir à tela de formulário, voltar à lista e distinguir cadastro de edição pelo `id` opcional.
-- [ ] T004 Definir `TattooIdea` com `id`, `title`, `description`, `style`, `difficulty`, `status` e `createdAt`, mais as opções fechadas de estilo, dificuldade e status, em `mobile/src/features/ideas/types.ts`; concluído quando o tipo e as opções correspondem a [data-model.md](data-model.md) e código consumidor não aceita valores fora dos domínios.
-- [ ] T005 Implementar `loadIdeas` e `saveIdeas` isolados em `mobile/src/features/ideas/storage.ts`, usando a chave `@inkbook/ideas/v1` e validando o array carregado; concluído quando chave ausente retorna `[]`, dados válidos persistem após reinício, e falha de acesso ou JSON inválido gera erro sem sobrescrever os dados locais.
+- [x] T003 Configurar Stack do Expo Router e somente as rotas funcionais Minhas Ideias e Cadastro/Edição em `mobile/src/app/_layout.tsx`, `mobile/src/app/index.tsx` e `mobile/src/app/idea.tsx`, removendo rotas demonstrativas do template; concluído quando é possível ir à tela de formulário, voltar à lista e distinguir cadastro de edição pelo `id` opcional.
+- [x] T004 Definir `TattooIdea` com `id`, `title`, `description`, `style`, `difficulty`, `status` e `createdAt`, mais as opções fechadas de estilo, dificuldade e status, em `mobile/src/features/ideas/types.ts`; concluído quando o tipo e as opções correspondem a [data-model.md](data-model.md) e código consumidor não aceita valores fora dos domínios.
+- [x] T005 Implementar `loadIdeas` e `saveIdeas` isolados em `mobile/src/features/ideas/storage.ts`, usando a chave `@inkbook/ideas/v1` e validando o array carregado; concluído quando chave ausente retorna `[]`, dados válidos persistem após reinício, e falha de acesso ou JSON inválido gera erro sem sobrescrever os dados locais.
 
 **Checkpoint**: Navegação, modelo e armazenamento prontos; nenhuma história depende de backend ou autenticação.
 
@@ -28,8 +28,8 @@
 
 **Teste independente**: Com catálogo de exemplo pré-carregado diretamente no AsyncStorage para verificação, sem recurso de seed no aplicativo, abrir Minhas Ideias, conferir título, estilo, dificuldade e status, ordem e permanência após reabrir o aplicativo. O critério de lista vazia é concluído em T016.
 
-- [ ] T006 [US2] Criar o cartão reutilizável em `mobile/src/components/IdeaCard.tsx` com título, estilo, dificuldade e status em português; concluído quando os quatro valores de uma `TattooIdea` são legíveis no cartão sem depender da tela de formulário.
-- [ ] T007 [US2] Carregar ideias ao abrir ou focar a tela e renderizá-las em FlatList em `mobile/src/app/index.tsx`, usando `id` como chave e ordem de cadastro mais recente; concluído quando a lista mostra todos os cartões na ordem prevista e recarrega dados persistidos após fechar e reabrir o aplicativo.
+- [x] T006 [US2] Criar o cartão reutilizável em `mobile/src/components/IdeaCard.tsx` com título, estilo, dificuldade e status em português; concluído quando os quatro valores de uma `TattooIdea` são legíveis no cartão sem depender da tela de formulário.
+- [x] T007 [US2] Carregar ideias ao abrir ou focar a tela e renderizá-las em FlatList em `mobile/src/app/index.tsx`, usando `id` como chave e ordem de cadastro mais recente; concluído quando a lista mostra todos os cartões na ordem prevista e recarrega dados persistidos após fechar e reabrir o aplicativo.
 
 **Checkpoint**: O fluxo de listagem de US02 pode ser verificado com catálogo local de exemplo; a história inteira fica concluída após T016 e T017, conforme a etapa 11 solicitada.
 
@@ -39,9 +39,9 @@
 
 **Teste independente**: Preencher dados válidos e descrição vazia, salvar e conferir a ideia no início da lista; tentar título inválido ou seleção obrigatória ausente e conferir os erros.
 
-- [ ] T008 [P] [US1] Criar campos reutilizáveis com rótulo e mensagem de erro em `mobile/src/components/FormField.tsx`; concluído quando título e descrição podem usar o mesmo componente e a mensagem de validação fica associada ao campo.
-- [ ] T009 [P] [US1] Implementar a validação pura de rascunhos em `mobile/src/features/ideas/validation.ts`, incluindo título com `trim` e mínimo de três caracteres, estilo/dificuldade obrigatórios e opções de status; concluído quando retorna erros por campo para entradas inválidas e aceita descrição vazia.
-- [ ] T010 [US1] Montar o modo cadastro em `mobile/src/app/idea.tsx`, com cinco campos, status inicial Quero desenhar, `id` UUID, `createdAt` ISO, `StyleSheet` e salvamento pela camada local; concluído quando uma ideia válida aparece primeiro em Minhas Ideias após gravação, um formulário inválido não grava e o usuário vê os erros.
+- [x] T008 [P] [US1] Criar campos reutilizáveis com rótulo e mensagem de erro em `mobile/src/components/FormField.tsx`; concluído quando título e descrição podem usar o mesmo componente e a mensagem de validação fica associada ao campo.
+- [x] T009 [P] [US1] Implementar a validação pura de rascunhos em `mobile/src/features/ideas/validation.ts`, incluindo título com `trim` e mínimo de três caracteres, estilo/dificuldade obrigatórios e opções de status; concluído quando retorna erros por campo para entradas inválidas e aceita descrição vazia.
+- [x] T010 [US1] Montar o modo cadastro em `mobile/src/app/idea.tsx`, com cinco campos, status inicial Quero desenhar, `id` UUID, `createdAt` ISO, `StyleSheet` e salvamento pela camada local; concluído quando uma ideia válida aparece primeiro em Minhas Ideias após gravação, um formulário inválido não grava e o usuário vê os erros.
 
 **Checkpoint**: US01 e o fluxo principal de US02 podem ser demonstrados sem as histórias posteriores.
 
@@ -51,9 +51,9 @@
 
 **Teste independente**: Abrir uma ideia, alterar dados, tentar edição inválida, cancelar exclusão e confirmar exclusão em tentativas separadas; conferir os dados após reiniciar.
 
-- [ ] T011 [US4] Carregar pelo `id` e preencher o mesmo formulário em modo edição em `mobile/src/app/idea.tsx`; concluído quando a ideia certa aparece nos campos, `id` desconhecido não abre cadastro silencioso e voltar sem salvar preserva os dados anteriores.
-- [ ] T012 [US4] Salvar edições válidas com a validação de US01 em `mobile/src/app/idea.tsx`, preservando `id`, `createdAt` e posição original; concluído quando a lista mostra os valores novos após reinício e uma edição inválida mantém o registro anterior.
-- [ ] T013 [US4] Adicionar exclusão ao cartão e confirmação identificando a ideia em `mobile/src/components/IdeaCard.tsx` e `mobile/src/app/index.tsx`; concluído quando cancelar não altera o catálogo, confirmar remove definitivamente só a ideia escolhida e a lista muda apenas após gravação concluída.
+- [x] T011 [US4] Carregar pelo `id` e preencher o mesmo formulário em modo edição em `mobile/src/app/idea.tsx`; concluído quando a ideia certa aparece nos campos, `id` desconhecido não abre cadastro silencioso e voltar sem salvar preserva os dados anteriores.
+- [x] T012 [US4] Salvar edições válidas com a validação de US01 em `mobile/src/app/idea.tsx`, preservando `id`, `createdAt` e posição original; concluído quando a lista mostra os valores novos após reinício e uma edição inválida mantém o registro anterior.
+- [x] T013 [US4] Adicionar exclusão ao cartão e confirmação identificando a ideia em `mobile/src/components/IdeaCard.tsx` e `mobile/src/app/index.tsx`; concluído quando cancelar não altera o catálogo, confirmar remove definitivamente só a ideia escolhida e a lista muda apenas após gravação concluída.
 
 **Checkpoint**: US04 funciona com o formulário reutilizado e o catálogo local.
 
@@ -63,7 +63,7 @@
 
 **Teste independente**: Alternar entre Quero desenhar, Em andamento e Concluído, salvar e conferir lista e valor após reabrir o aplicativo.
 
-- [ ] T014 [US3] Habilitar a escolha dos três status na edição em `mobile/src/app/idea.tsx`, reutilizando a validação e o salvamento existentes; concluído quando cada status permitido pode substituir o anterior, aparece no cartão e permanece após reinício.
+- [x] T014 [US3] Habilitar a escolha dos três status na edição em `mobile/src/app/idea.tsx`, reutilizando a validação e o salvamento existentes; concluído quando cada status permitido pode substituir o anterior, aparece no cartão e permanece após reinício.
 
 **Checkpoint**: US03 permite acompanhar o estado atual sem criar histórico extra.
 
@@ -73,7 +73,7 @@
 
 **Teste independente**: Com ideias nos três status, selecionar Todos e cada status; conferir que só aparecem correspondências, em ordem de cadastro.
 
-- [ ] T015 [US5] Adicionar filtros Todos, Quero desenhar, Em andamento e Concluído em `mobile/src/app/index.tsx`, aplicados em memória à FlatList; concluído quando Todos exibe o catálogo completo, cada filtro exibe apenas seu status e a ordem de cadastro é preservada após edição ou exclusão.
+- [x] T015 [US5] Adicionar filtros Todos, Quero desenhar, Em andamento e Concluído em `mobile/src/app/index.tsx`, aplicados em memória à FlatList; concluído quando Todos exibe o catálogo completo, cada filtro exibe apenas seu status e a ordem de cadastro é preservada após edição ou exclusão.
 
 **Checkpoint**: Os quatro filtros funcionam; US05 fica concluída após a mensagem sem resultados de T016, conforme a etapa 11 solicitada.
 
@@ -81,9 +81,9 @@
 
 **Objetivo**: Completar os estados de carregamento, vazio e falhas de armazenamento das duas telas.
 
-- [ ] T016 Implementar carregamento, catálogo vazio e filtro sem correspondências em `mobile/src/app/index.tsx`; concluído quando cada situação mostra uma mensagem distinta em português e o catálogo vazio oferece acesso ao cadastro.
-- [ ] T017 Tratar erro de leitura com ação de tentar novamente em `mobile/src/app/index.tsx`; concluído quando falha ou conteúdo inválido não aparece como lista vazia e não permite sobrescrever os dados antes de uma leitura válida.
-- [ ] T018 Tratar falhas de cadastro/edição e exclusão em `mobile/src/app/idea.tsx` e `mobile/src/app/index.tsx`; concluído quando erro mantém formulário ou cartão, bloqueia confirmação falsa e controles impedem envios duplicados durante gravação.
+- [x] T016 Implementar carregamento, catálogo vazio e filtro sem correspondências em `mobile/src/app/index.tsx`; concluído quando cada situação mostra uma mensagem distinta em português e o catálogo vazio oferece acesso ao cadastro.
+- [x] T017 Tratar erro de leitura com ação de tentar novamente em `mobile/src/app/index.tsx`; concluído quando falha ou conteúdo inválido não aparece como lista vazia e não permite sobrescrever os dados antes de uma leitura válida.
+- [x] T018 Tratar falhas de cadastro/edição e exclusão em `mobile/src/app/idea.tsx` e `mobile/src/app/index.tsx`; concluído quando erro mantém formulário ou cartão, bloqueia confirmação falsa e controles impedem envios duplicados durante gravação.
 
 **Checkpoint**: Todos os estados observáveis definidos em [contracts/ui-and-storage.md](contracts/ui-and-storage.md) estão presentes.
 
@@ -106,7 +106,7 @@
 
 **Objetivo**: Entregar instruções de uso e espaço para evidências visuais.
 
-- [ ] T027 Preparar `README.md` na raiz com requisitos, comandos para executar `mobile/` no Expo Go, resumo das cinco user stories, localização da especificação e seções reservadas para screenshots das duas telas; concluído quando outra pessoa consegue iniciar o aplicativo seguindo o README e sabe onde inserir as capturas sem que imagens sejam inventadas.
+- [x] T027 Preparar `README.md` na raiz com requisitos, comandos para executar `mobile/` no Expo Go, resumo das cinco user stories, localização da especificação e seções reservadas para screenshots das duas telas; concluído quando outra pessoa consegue iniciar o aplicativo seguindo o README e sabe onde inserir as capturas sem que imagens sejam inventadas.
 
 ## Dependencies & Execution Order
 

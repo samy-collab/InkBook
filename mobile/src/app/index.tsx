@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { ActivityIndicator, Alert, FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { IdeaCard } from '../components/IdeaCard';
@@ -17,7 +17,7 @@ export default function IdeasScreen() {
   const [loadState, setLoadState] = useState<'loading' | 'ready' | 'error'>('loading');
   const [actionError, setActionError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [retryKey, setRetryKey] = useState(0);
+  const [pendingDeletion, setPendingDeletion] = useState<TattooIdea | null>(null);
 
   useFocusEffect(useCallback(() => {
     let active = true;
@@ -33,7 +33,17 @@ export default function IdeasScreen() {
         if (active) setLoadState('error');
       });
     return () => { active = false; };
-  }, [retryKey]));
+  }, []));
+
+  async function retryLoad() {
+    setLoadState('loading');
+    try {
+      setIdeas(await loadIdeas());
+      setLoadState('ready');
+    } catch {
+      setLoadState('error');
+    }
+  }
 
   const visibleIdeas = filter === 'Todos' ? ideas : ideas.filter((idea) => idea.status === filter);
 
@@ -53,14 +63,14 @@ export default function IdeasScreen() {
   }
 
   function confirmDelete(idea: TattooIdea) {
-    Alert.alert(
-      'Excluir ideia?',
-      `“${idea.title}” será removida definitivamente.`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Excluir', style: 'destructive', onPress: () => { void deleteIdea(idea); } },
-      ],
-    );
+    setPendingDeletion(idea);
+  }
+
+  function acceptDelete() {
+    if (!pendingDeletion) return;
+    const idea = pendingDeletion;
+    setPendingDeletion(null);
+    void deleteIdea(idea);
   }
 
   function renderEmpty() {
@@ -110,7 +120,7 @@ export default function IdeasScreen() {
         <View style={styles.stateCard}>
           <Text style={styles.stateTitle}>Não foi possível abrir suas ideias.</Text>
           <Text style={styles.stateText}>Seus dados não foram alterados. Tente carregar novamente.</Text>
-          <Pressable accessibilityRole="button" onPress={() => setRetryKey((key) => key + 1)} style={styles.retryButton}>
+          <Pressable accessibilityRole="button" onPress={() => { void retryLoad(); }} style={styles.retryButton}>
             <Text style={styles.retryText}>Tentar novamente</Text>
           </Pressable>
         </View>
@@ -156,6 +166,30 @@ export default function IdeasScreen() {
           />
         </>
       )}
+      <Modal
+        animationType="fade"
+        onRequestClose={() => setPendingDeletion(null)}
+        transparent
+        visible={pendingDeletion !== null}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalKicker}>CONFIRMAR EXCLUSÃO</Text>
+            <Text style={styles.modalTitle}>Excluir ideia?</Text>
+            <Text style={styles.modalText}>
+              “{pendingDeletion?.title}” será removida definitivamente do seu caderno.
+            </Text>
+            <View style={styles.modalActions}>
+              <Pressable accessibilityRole="button" onPress={() => setPendingDeletion(null)} style={styles.cancelButton}>
+                <Text style={styles.cancelText}>Cancelar</Text>
+              </Pressable>
+              <Pressable accessibilityRole="button" onPress={acceptDelete} style={styles.confirmButton}>
+                <Text style={styles.confirmText}>Excluir ideia</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -200,4 +234,14 @@ const styles = StyleSheet.create({
   retryButton: { backgroundColor: palette.ink, borderRadius: 10, alignSelf: 'flex-start', paddingVertical: 10, paddingHorizontal: 14, marginTop: 17 },
   retryText: { color: palette.card, fontSize: 12, fontWeight: '800' },
   actionError: { color: palette.error, backgroundColor: palette.errorSoft, marginHorizontal: 22, marginBottom: 10, padding: 12, borderRadius: 9, fontSize: 12, fontWeight: '600' },
+  modalBackdrop: { flex: 1, backgroundColor: 'rgba(36, 34, 31, 0.48)', justifyContent: 'center', padding: 24 },
+  modalCard: { backgroundColor: palette.card, borderRadius: 22, padding: 23, maxWidth: 420, width: '100%', alignSelf: 'center' },
+  modalKicker: { color: palette.accent, fontSize: 10, fontWeight: '800', letterSpacing: 1.8 },
+  modalTitle: { color: palette.ink, fontFamily: 'serif', fontSize: 28, marginTop: 12 },
+  modalText: { color: palette.muted, fontSize: 14, lineHeight: 21, marginTop: 9 },
+  modalActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 10, marginTop: 25 },
+  cancelButton: { borderColor: palette.line, borderWidth: 1, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 11 },
+  cancelText: { color: palette.ink, fontSize: 12, fontWeight: '700' },
+  confirmButton: { backgroundColor: palette.error, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 11 },
+  confirmText: { color: palette.card, fontSize: 12, fontWeight: '800' },
 });
