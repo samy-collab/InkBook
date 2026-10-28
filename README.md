@@ -4,7 +4,7 @@
 
 ## Descrição e objetivo
 
-O InkBook é um aplicativo para registrar e organizar ideias de tatuagens ou desenhos e acompanhar o andamento de cada uma. O usuário pode cadastrar, visualizar, editar, excluir e filtrar ideias nas telas **Minhas Ideias** e **Cadastro/Edição**. Os dados são armazenados localmente no dispositivo, sem login, backend ou sincronização em nuvem.
+ooooO InkBook é um aplicativo para registrar e organizar ideias de tatuagens ou desenhos e acompanhar o andamento de cada uma. O usuário pode cadastrar, visualizar, editar, excluir e filtrar ideias nas telas **Minhas Ideias** e **Cadastro/Edição**. Os dados são armazenados localmente no dispositivo, sem login, backend ou sincronização em nuvem.
 
 ## Tecnologias utilizadas
 
