@@ -89,7 +89,7 @@ O desenvolvimento foi organizado em cinco etapas:
 
 ## Revisão da especificação
 
-Após revisar a especificação gerada pela IA, acrescentei a validação que impede cadastrar ideias com títulos compostos apenas por espaços.
+AApós revisar a especificação gerada pela IA, acrescentei a validação que impede cadastrar ideias com títulos compostos apenas por espaços.
 
 ## Instalação e execução com Expo Go
 
